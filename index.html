@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spokes AI Agents | Knowledge26 Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Outfit',sans-serif;background:#061525;color:#e8f4f8;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+    .header-img,.footer-img{width:100%;display:block;flex-shrink:0}
+    .qz-wrap{background:rgba(10,31,51,0.85);border:1px solid rgba(98,216,78,0.15);border-radius:12px;max-width:420px;width:100%;padding:32px 20px;box-shadow:0 0 20px rgba(98,216,78,0.08)}
+    .qz-q{font-size:1.18rem;font-weight:600;margin-bottom:18px;color:#e8f4f8}
+    .qz-opts{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+    .qz-btn{background:linear-gradient(135deg,#62d84e,#00c7b1);color:#061525;font-weight:700;border:none;border-radius:10px;padding:12px 24px;cursor:pointer;transition:transform .1s}
+    .qz-btn:active{transform:translateY(1px)}
+    .qz-btn[disabled]{opacity:.6;cursor:not-allowed}
+    .qz-feed{margin-bottom:16px;font-size:1rem;font-weight:500}
+    .qz-score{font-size:1.1rem;font-weight:600;margin-bottom:18px;color:#62d84e}
+    .qz-next{margin-top:10px}
+    @media(max-width:500px){.qz-wrap{padding:18px 4px}}
+  </style>
+</head>
+<body>
+  <img src="https://raw.githubusercontent.com/testmail-ihub/spokes-ai-assets/main/header-banner.jpg" class="header-img" alt="Header" style="min-height:140px; background:#061525;" />
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;">
+    <div class="qz-wrap" id="quiz">
+      <div class="qz-q" id="qz-question"></div>
+      <div class="qz-opts" id="qz-options"></div>
+      <div class="qz-feed" id="qz-feedback"></div>
+      <button class="qz-btn qz-next" id="qz-next" style="display:none">Next</button>
+      <div class="qz-score" id="qz-score" style="display:none"></div>
+      <button class="qz-btn" id="qz-restart" style="display:none;margin-top:8px">Restart Quiz</button>
+    </div>
+  </div>
+  <img src="https://raw.githubusercontent.com/testmail-ihub/spokes-ai-assets/main/footer-banner.jpg" class="footer-img" alt="Footer" style="min-height:28px; background:#0a1f33;" />
+  <script>
+const quiz=[
+  {q:"What is the codename for the ServiceNow release in 2020?",opts:["Paris","Orlando","Quebec","Tokyo"],a:0},
+  {q:"Which release introduced Flow Designer?",opts:["Istanbul","Kingston","London","Madrid"],a:1},
+  {q:"What year was the 'Tokyo' release launched?",opts:["2021","2022","2020","2019"],a:1},
+  {q:"Which feature was first in the 'Quebec' release?",opts:["App Engine Studio","Virtual Agent","Performance Analytics","Service Portal"],a:0},
+  {q:"Which release came after 'Orlando'?",opts:["Paris","Quebec","Rome","San Diego"],a:0}
+];
+let idx=0,score=0,answered=false;
+const qDiv=document.getElementById('qz-question'),oDiv=document.getElementById('qz-options'),fDiv=document.getElementById('qz-feedback'),nBtn=document.getElementById('qz-next'),sDiv=document.getElementById('qz-score'),rBtn=document.getElementById('qz-restart');
+function showQ(){
+  let q=quiz[idx];
+  qDiv.textContent=`Q${idx+1}. ${q.q}`;
+  oDiv.innerHTML='';
+  fDiv.textContent='';
+  nBtn.style.display='none';
+  sDiv.style.display='none';
+  rBtn.style.display='none';
+  answered=false;
+  q.opts.forEach((opt,i)=>{
+    let b=document.createElement('button');
+    b.className='qz-btn';
+    b.textContent=opt;
+    b.onclick=()=>selectA(i);
+    oDiv.appendChild(b);
+  });
+}
+function selectA(i){
+  if(answered)return;
+  answered=true;
+  let q=quiz[idx];
+  Array.from(oDiv.children).forEach((b,j)=>b.disabled=true);
+  if(i===q.a){
+    fDiv.textContent='Correct!';
+    fDiv.style.color='#62d84e';
+    score++;
+  }else{
+    fDiv.textContent=`Wrong! Correct: ${q.opts[q.a]}`;
+    fDiv.style.color='#e85c4a';
+  }
+  nBtn.style.display='block';
+}
+nBtn.onclick=()=>{
+  idx++;
+  if(idx<quiz.length)showQ();
+  else showScore();
+};
+function showScore(){
+  qDiv.textContent='Quiz Complete!';
+  oDiv.innerHTML='';
+  fDiv.textContent='';
+  sDiv.textContent=`Your score: ${score} / ${quiz.length}`;
+  sDiv.style.display='block';
+  rBtn.style.display='inline-block';
+  nBtn.style.display='none';
+}
+rBtn.onclick=()=>{idx=0;score=0;showQ();};
+showQ();
+  </script>
+</body>
+</html>
